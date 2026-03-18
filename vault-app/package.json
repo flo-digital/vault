@@ -12,6 +12,7 @@
     "appId": "com.vault.visuallibrary",
     "productName": "Vault",
     "copyright": "Copyright © 2026",
+    "afterSign": "./afterSign.js",
     "directories": {
       "output": "../dist"
     },
@@ -35,7 +36,8 @@
     },
     "files": [
       "main.js",
-      "preload.js"
+      "preload.js",
+      "afterSign.js"
     ],
     "extraResources": [
       { "from": "../vault.html", "to": "vault.html" }
