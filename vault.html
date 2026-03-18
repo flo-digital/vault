@@ -280,6 +280,10 @@ body.light .icon-picker button:hover{background:rgba(0,0,0,.07)}
 .td-list{max-height:190px;overflow-y:auto;scrollbar-width:thin}
 .td-opt{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;cursor:pointer;transition:background .1s;font-size:12px;color:var(--t2)}
 .td-opt:hover{background:rgba(255,255,255,.07);color:var(--t1)}
+.td-del{margin-left:auto;padding:0 3px;font-size:14px;line-height:1;color:var(--t3);border-radius:3px;flex-shrink:0;opacity:0;transition:opacity .1s,color .1s}
+.td-opt:hover .td-del{opacity:1}
+.td-del:hover{color:#ff7070!important}
+.td-create{color:var(--t2);font-style:italic}
 .td-opt.has{background:rgba(255,255,255,.09);color:var(--t1)}
 .td-check{width:14px;text-align:center;font-size:10px}
 
@@ -663,7 +667,17 @@ function tagColor(tag){
   return TAG_PALETTE[h%TAG_PALETTE.length];
 }
 
-const ALL_TAGS = ['dark','minimal','colorful','texture','abstract','nature','urban','concept-art','render','lighting','material','dramatic','pastel','monochrome','cinematic','geometric','organic','HDR'];
+// Dynamic tag list: tags used on images + user's custom tags, deduplicated & sorted
+function getAllTags() {
+  const fromImages = new Set();
+  state.images.forEach(i => i.tags.forEach(t => fromImages.add(t)));
+  const all = new Set([...fromImages, ...state.customTags]);
+  return [...all].sort((a,b)=>a.localeCompare(b));
+}
+function getUnusedCustomTags() {
+  const used = new Set(state.images.flatMap(i=>i.tags));
+  return state.customTags.filter(t=>!used.has(t));
+}
 
 const COLOR_FILTERS = [
   {name:'Red',   hex:'#c0392b'},{name:'Orange', hex:'#e67e22'},{name:'Yellow', hex:'#f1c40f'},
@@ -736,6 +750,7 @@ const state = {
   expandedColls: new Set(['inspiration','3d-renders','textures']),
   viewStyle: 'tagged', // 'tagged' | 'minimal'
   ctxTarget: null,
+  customTags: [], // user-created tags persisted across sessions
 };
 
 // Flatten all collection IDs (including children)
@@ -755,12 +770,21 @@ function getCollectionById(id, list=state.collections) {
   return null;
 }
 
+// Return all collection IDs in the subtree rooted at id (inclusive)
+function collSubtreeIds(id) {
+  const ids = [id];
+  const coll = findCollById(state.collections, id);
+  if (coll?.children?.length) coll.children.forEach(c=>ids.push(...collSubtreeIds(c.id)));
+  return ids;
+}
+
 function countForCollection(id) {
   if (id==='all') return state.images.length;
   if (id==='recent') return state.images.filter(i=>new Date(i.date)>new Date(Date.now()-7*864e5)).length;
   if (id==='starred') return state.images.filter(i=>i.favorite).length;
   if (id==='untagged') return state.images.filter(i=>!i.tags.length).length;
-  return state.images.filter(i=>i.collection===id).length;
+  const subtree = collSubtreeIds(id);
+  return state.images.filter(i=>subtree.includes(i.collection)).length;
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1512,44 +1536,95 @@ function showCtxMenu(e, id) {
 
 function showTagDropdown(anchor, img) {
   const drop = document.getElementById('tagDrop');
-  const allTags = ALL_TAGS;
 
-  let html = `<input class="td-search" id="tdSearch" placeholder="Search tags…" autocomplete="off">
-    <div class="td-list" id="tdList">`;
-  allTags.forEach(t=>{
-    const has = img.tags.includes(t);
-    const c = tagColor(t);
-    html += `<div class="td-opt${has?' has':''}" data-topt="${t}">
-      <span class="td-check">${has?'✓':''}</span>
-      <span class="tag-dot"></span>
-      <span>${t}</span>
-    </div>`;
-  });
-  html += '</div>';
-  drop.innerHTML = html;
+  function rebuildDrop(query='') {
+    const allTags = getAllTags();
+    const q = query.toLowerCase().trim();
+    const filtered = q ? allTags.filter(t=>t.toLowerCase().includes(q)) : allTags;
+    const exactMatch = allTags.some(t=>t.toLowerCase()===q);
+    const unusedCustom = new Set(getUnusedCustomTags());
 
-  const rect = anchor.getBoundingClientRect();
-  positionMenu(drop, rect.left, rect.bottom+4);
-  drop.classList.add('show');
-
-  document.getElementById('tdSearch').addEventListener('input', e=>{
-    const q = e.target.value.toLowerCase();
-    drop.querySelectorAll('.td-opt').forEach(o=>{
-      o.style.display = o.dataset.topt.includes(q)?'':'none';
+    let inner = '';
+    filtered.forEach(t=>{
+      const has = img.tags.includes(t);
+      const isUnused = unusedCustom.has(t);
+      inner += `<div class="td-opt${has?' has':''}" data-topt="${t}">
+        <span class="td-check">${has?'✓':''}</span>
+        <span class="tag-dot"></span>
+        <span style="flex:1">${t}</span>
+        ${isUnused?`<span class="td-del" data-deltag="${t}" title="Remove tag">×</span>`:''}
+      </div>`;
     });
-  });
-  document.getElementById('tdSearch').focus();
+    // "Create new tag" row
+    if (q && !exactMatch) {
+      inner += `<div class="td-opt td-create" data-newtag="${q}">
+        <span class="td-check">+</span>
+        <span class="tag-dot" style="opacity:.4"></span>
+        <span>Create "<strong>${q}</strong>"</span>
+      </div>`;
+    }
+    if (!inner) inner = `<div style="padding:6px 8px;font-size:11px;color:var(--t3)">No tags yet — type to create one</div>`;
 
-  drop.querySelectorAll('.td-opt').forEach(o=>{
-    o.addEventListener('click', ()=>{
-      const t = o.dataset.topt;
-      if (img.tags.includes(t)) img.tags=img.tags.filter(x=>x!==t);
-      else img.tags.push(t);
-      renderAll();
-      // Refresh dropdown
-      showTagDropdown(anchor, img);
+    drop.innerHTML = `<input class="td-search" id="tdSearch" placeholder="Search or create tag…" autocomplete="off" value="${query}">
+      <div class="td-list">${inner}</div>`;
+
+    const rect = anchor.getBoundingClientRect();
+    positionMenu(drop, rect.left, rect.bottom+4);
+    drop.classList.add('show');
+
+    const inp = document.getElementById('tdSearch');
+    inp.focus();
+    inp.setSelectionRange(inp.value.length, inp.value.length);
+
+    inp.addEventListener('input', e => rebuildDrop(e.target.value));
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const val = inp.value.trim().toLowerCase().replace(/\s+/g,'-');
+        if (!val) return;
+        if (!img.tags.includes(val)) img.tags.push(val);
+        if (!state.customTags.includes(val)) state.customTags.push(val);
+        renderAllAndSave();
+        rebuildDrop('');
+      }
+      if (e.key === 'Escape') { drop.classList.remove('show'); }
     });
-  });
+
+    // Toggle existing tag
+    drop.querySelectorAll('.td-opt[data-topt]').forEach(o=>{
+      o.addEventListener('click', e=>{
+        if (e.target.closest('.td-del')) return; // handled below
+        const t = o.dataset.topt;
+        if (img.tags.includes(t)) img.tags=img.tags.filter(x=>x!==t);
+        else img.tags.push(t);
+        renderAllAndSave();
+        rebuildDrop(inp?.value||'');
+      });
+    });
+
+    // Delete unused custom tag
+    drop.querySelectorAll('.td-del[data-deltag]').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const t = btn.dataset.deltag;
+        state.customTags = state.customTags.filter(x=>x!==t);
+        renderAllAndSave();
+        rebuildDrop(inp?.value||'');
+      });
+    });
+
+    // Create new tag via click
+    drop.querySelectorAll('.td-create[data-newtag]').forEach(o=>{
+      o.addEventListener('click', ()=>{
+        const t = o.dataset.newtag.toLowerCase().replace(/\s+/g,'-');
+        if (!img.tags.includes(t)) img.tags.push(t);
+        if (!state.customTags.includes(t)) state.customTags.push(t);
+        renderAllAndSave();
+        rebuildDrop('');
+      });
+    });
+  }
+
+  rebuildDrop();
 }
 
 function showCollDropdown(anchor, img) {
@@ -2092,6 +2167,7 @@ function persistData() {
   const payload = {
     images: state.images,
     collections: state.collections,
+    customTags: state.customTags,
     settings: { viewMode: state.viewMode, viewStyle: state.viewStyle, isDark, thumbSize: state.thumbSize }
   };
   if (IS_ELECTRON) {
@@ -2147,6 +2223,7 @@ if (IS_ELECTRON) {
     // Only replace demo images if we have real saved images
     if (Array.isArray(loaded.images) && loaded.images.length) state.images = loaded.images;
     if (Array.isArray(loaded.collections) && loaded.collections.length) state.collections = loaded.collections;
+    if (Array.isArray(loaded.customTags)) state.customTags = loaded.customTags;
     if (loaded.settings) {
       if (loaded.settings.viewMode)  state.viewMode  = loaded.settings.viewMode;
       if (loaded.settings.viewStyle) state.viewStyle = loaded.settings.viewStyle;
