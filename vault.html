@@ -104,7 +104,7 @@ body.light .sb-logo-mark:hover{background:rgba(0,0,0,.09);box-shadow:inset 0 1px
 .tb-btn.on{background:rgba(255,255,255,.1);color:var(--t1);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.2)}
 .sort-wrap{position:relative}
 .sort-btn{font-size:11.5px;padding:4px 9px;display:flex;align-items:center;white-space:nowrap;min-width:72px}
-.sort-drop{position:absolute;top:calc(100% + 4px);left:0;background:rgba(12,12,12,.94);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:4px;min-width:120px;box-shadow:0 20px 56px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1);z-index:600;display:none;animation:menuPop .12s ease}
+.sort-drop{position:fixed;background:rgba(12,12,12,.94);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:4px;min-width:120px;box-shadow:0 20px 56px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1);z-index:1000;display:none;animation:menuPop .12s ease}
 .sort-drop.show{display:block}
 .sort-opt{padding:6px 10px;border-radius:7px;font-size:12px;color:var(--t1);cursor:pointer;transition:background .1s;white-space:nowrap}
 .sort-opt:hover{background:rgba(255,255,255,.08)}
@@ -1967,12 +1967,12 @@ document.getElementById('searchInput').addEventListener('input', e=>{
 
   btn.addEventListener('click', e=>{
     e.stopPropagation();
-    // Mark active option
     drop.querySelectorAll('.sort-opt').forEach(o=>{
       o.classList.toggle('active', o.dataset.val===state.sortBy);
     });
     const rect = btn.getBoundingClientRect();
-    drop.style.left = '0px';
+    drop.style.left = rect.left + 'px';
+    drop.style.top  = (rect.bottom + 4) + 'px';
     drop.classList.toggle('show');
   });
 
