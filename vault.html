@@ -1238,7 +1238,7 @@ function renderCard(img, vm) {
         <span class="list-meta">${img.w}×${img.h}</span>
         <span class="list-meta" style="min-width:60px">${img.size}</span>
         <span class="list-meta" style="min-width:90px">${img.date}</span>
-        <button class="card-fav${img.favorite?' on':''}" data-fav="${img.id}" title="${img.favorite?'Remove from favorites':'Add to favorites'}">${img.favorite?'<svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z" rx="1"/></svg>':'<svg width="11" height="13" viewBox="0 0 11 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>'}</button>
+        <button class="card-fav${img.favorite?' on':''}" data-fav="${img.id}" title="${img.favorite?'Remove from favorites':'Add to favorites'}">${img.favorite?'<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>':'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>'}</button>
       </div>
     </div>`;
   }
@@ -1253,7 +1253,7 @@ function renderCard(img, vm) {
       <img src="${img.fileUrl || `https://picsum.photos/seed/${img.seed}/${thumbW}/${thumbH}`}" alt="${img.name}" crossorigin="anonymous" data-imgid="${img.id}">
       <div class="tw-overlay"></div>
     </div>
-    <button class="card-fav${img.favorite?' on':''}" data-fav="${img.id}" title="${img.favorite?'Remove from favorites':'Add to favorites'}">${img.favorite?'<svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z" rx="1"/></svg>':'<svg width="11" height="13" viewBox="0 0 11 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>'}</button>
+    <button class="card-fav${img.favorite?' on':''}" data-fav="${img.id}" title="${img.favorite?'Remove from favorites':'Add to favorites'}">${img.favorite?'<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>':'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>'}</button>
     <div class="card-info">
       <div class="card-nm">${img.name}</div>
       <div class="card-tags">${tags}</div>
@@ -1300,7 +1300,7 @@ function renderPanel() {
         <div class="rp-val" style="font-size:13px;font-weight:600;margin-bottom:4px">${img.name}</div>
         <div style="font-size:11px;color:var(--t3)">in ${collName}</div>
       </div>
-      <button id="rpFavBtn" title="${img.favorite?'Remove from favorites':'Add to favorites'}" style="flex-shrink:0;background:rgba(255,255,255,${img.favorite?'.1':'.04'});border:1px solid rgba(255,255,255,${img.favorite?'.2':'.08'});border-radius:7px;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:${img.favorite?'rgba(255,255,255,.9)':'rgba(255,255,255,.3)'};padding:0;transition:all .15s">${img.favorite?'<svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>':'<svg width="11" height="13" viewBox="0 0 11 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>'}</button>
+      <button id="rpFavBtn" title="${img.favorite?'Remove from favorites':'Add to favorites'}" style="flex-shrink:0;background:rgba(255,255,255,${img.favorite?'.1':'.04'});border:1px solid rgba(255,255,255,${img.favorite?'.2':'.08'});border-radius:7px;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:${img.favorite?'rgba(255,255,255,.9)':'rgba(255,255,255,.3)'};padding:0;transition:all .15s">${img.favorite?'<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>':'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>'}</button>
     </div>
 
     <div class="rp-sec">
@@ -1521,7 +1521,7 @@ function showCtxMenu(e, id) {
     <div class="ctx-it" id="ctx-open"><span class="ctx-ico">👁</span>View Details</div>
     <div class="ctx-it" id="ctx-tags"><span class="ctx-ico">🏷</span>Add Tags<span class="ctx-sub">→</span></div>
     <div class="ctx-it" id="ctx-move"><span class="ctx-ico">📁</span>Move to Collection<span class="ctx-sub">→</span></div>
-    <div class="ctx-it" id="ctx-fav"><span class="ctx-ico">${img.favorite?'<svg width="10" height="12" viewBox="0 0 11 13" fill="currentColor"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>':'<svg width="10" height="12" viewBox="0 0 11 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M1.5 1.5h8v10l-4-2.5-4 2.5v-10z"/></svg>'}</span>${img.favorite?'Remove from Favorites':'Add to Favorites'}</div>
+    <div class="ctx-it" id="ctx-fav"><span class="ctx-ico">${img.favorite?'<svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>':'<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M6 1.5L7.2 4.6H10.4L7.8 6.5L8.9 9.6L6 7.8L3.1 9.6L4.2 6.5L1.6 4.6H4.8Z"/></svg>'}</span>${img.favorite?'Remove from Favorites':'Add to Favorites'}</div>
     <div class="ctx-sep"></div>
     <div class="ctx-it" id="ctx-sel"><span class="ctx-ico">${state.selectedIds.includes(id)?'✓':''}</span>${state.selectedIds.includes(id)?'Deselect':'Select'}</div>
     ${state.selectedIds.length>1?'<div class="ctx-it" id="ctx-selmv"><span class="ctx-ico">📦</span>Move '+state.selectedIds.length+' selected</div>':''}
