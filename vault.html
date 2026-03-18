@@ -537,13 +537,6 @@ body.light .drag-inner{animation:dragPulseLight 1.8s ease-in-out infinite}
             <span id="sortLabel">Date ↓</span>
             <svg width="7" height="5" viewBox="0 0 7 5" fill="currentColor" style="margin-left:4px;opacity:.5;flex-shrink:0"><path d="M0 0l3.5 5L7 0z"/></svg>
           </button>
-          <div class="sort-drop" id="sortDrop">
-            <div class="sort-opt" data-val="date-desc">Date ↓</div>
-            <div class="sort-opt" data-val="date-asc">Date ↑</div>
-            <div class="sort-opt" data-val="name-asc">Name A–Z</div>
-            <div class="sort-opt" data-val="name-desc">Name Z–A</div>
-            <div class="sort-opt" data-val="size-desc">Size ↓</div>
-          </div>
         </div>
 
         <div class="tb-sep"></div>
@@ -574,6 +567,15 @@ body.light .drag-inner{animation:dragPulseLight 1.8s ease-in-out infinite}
     </div>
 
   </div>
+</div>
+
+<!-- SORT DROPDOWN (must live at body level — toolbar has backdrop-filter which traps fixed children) -->
+<div class="sort-drop" id="sortDrop">
+  <div class="sort-opt" data-val="date-desc">Date ↓</div>
+  <div class="sort-opt" data-val="date-asc">Date ↑</div>
+  <div class="sort-opt" data-val="name-asc">Name A–Z</div>
+  <div class="sort-opt" data-val="name-desc">Name Z–A</div>
+  <div class="sort-opt" data-val="size-desc">Size ↓</div>
 </div>
 
 <!-- CONTEXT MENU -->
