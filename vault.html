@@ -102,8 +102,17 @@ body.light .sb-logo-mark:hover{background:rgba(0,0,0,.09);box-shadow:inset 0 1px
 .tb-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:7px;cursor:pointer;color:var(--t3);transition:all .12s;border:none;background:transparent;flex-shrink:0}
 .tb-btn:hover{background:rgba(255,255,255,.07);color:var(--t2)}
 .tb-btn.on{background:rgba(255,255,255,.1);color:var(--t1);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.2)}
-.tb-sel{background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:7px;color:var(--t2);font-family:var(--f);font-size:11.5px;padding:4px 22px 4px 8px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='rgba(255,255,255,0.3)'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;transition:border-color .15s}
-.tb-sel:focus{border-color:rgba(255,255,255,.22)}
+.sort-wrap{position:relative}
+.sort-btn{font-size:11.5px;padding:4px 9px;display:flex;align-items:center;white-space:nowrap;min-width:72px}
+.sort-drop{position:absolute;top:calc(100% + 4px);left:0;background:rgba(12,12,12,.94);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:4px;min-width:120px;box-shadow:0 20px 56px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1);z-index:600;display:none;animation:menuPop .12s ease}
+.sort-drop.show{display:block}
+.sort-opt{padding:6px 10px;border-radius:7px;font-size:12px;color:var(--t1);cursor:pointer;transition:background .1s;white-space:nowrap}
+.sort-opt:hover{background:rgba(255,255,255,.08)}
+.sort-opt.active{color:var(--t1);background:rgba(255,255,255,.1)}
+body.light .sort-drop{background:rgba(240,237,233,.97);border-color:rgba(0,0,0,.1);box-shadow:0 16px 48px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.95)}
+body.light .sort-opt{color:rgba(0,0,0,.82)}
+body.light .sort-opt:hover{background:rgba(0,0,0,.06)}
+body.light .sort-opt.active{background:rgba(0,0,0,.08)}
 .sz-w{display:flex;align-items:center;gap:6px;margin-left:auto}
 .sz-lbl{font-size:9.5px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
 .sz-sl{width:76px;-webkit-appearance:none;height:2px;background:rgba(255,255,255,.1);border-radius:1px;outline:none;cursor:pointer}
@@ -349,8 +358,6 @@ body.light .tb-sep{background:rgba(0,0,0,.09)}
 body.light .tb-btn{color:rgba(0,0,0,.38)}
 body.light .tb-btn:hover{background:rgba(0,0,0,.06);color:rgba(0,0,0,.65)}
 body.light .tb-btn.on{background:rgba(0,0,0,.09);color:rgba(0,0,0,.82);box-shadow:inset 0 1px 0 rgba(0,0,0,.08),inset 0 -1px 0 rgba(0,0,0,.04)}
-body.light .tb-sel{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.15);color:rgba(0,0,0,.78);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='rgba(0,0,0,0.5)'/%3E%3C/svg%3E")}
-body.light .tb-sel:focus{border-color:rgba(0,0,0,.3)}
 body.light .sz-lbl{color:rgba(0,0,0,.27)}
 body.light .sz-sl{background:rgba(0,0,0,.12)}
 body.light .sz-sl::-webkit-slider-thumb{background:rgba(0,0,0,.6);box-shadow:0 2px 8px rgba(0,0,0,.2),0 0 0 3px rgba(0,0,0,.06)}
@@ -525,14 +532,19 @@ body.light .drag-inner{animation:dragPulseLight 1.8s ease-in-out infinite}
 
         <div class="tb-sep"></div>
 
-        <select class="tb-sel" id="sortSel">
-          <option value="date-desc">Date ↓</option>
-          <option value="date-asc">Date ↑</option>
-          <option value="name-asc">Name A–Z</option>
-          <option value="name-desc">Name Z–A</option>
-
-          <option value="size-desc">Size ↓</option>
-        </select>
+        <div class="sort-wrap" id="sortWrap">
+          <button class="tb-btn sort-btn" id="sortBtn" title="Sort order">
+            <span id="sortLabel">Date ↓</span>
+            <svg width="7" height="5" viewBox="0 0 7 5" fill="currentColor" style="margin-left:4px;opacity:.5;flex-shrink:0"><path d="M0 0l3.5 5L7 0z"/></svg>
+          </button>
+          <div class="sort-drop" id="sortDrop">
+            <div class="sort-opt" data-val="date-desc">Date ↓</div>
+            <div class="sort-opt" data-val="date-asc">Date ↑</div>
+            <div class="sort-opt" data-val="name-asc">Name A–Z</div>
+            <div class="sort-opt" data-val="name-desc">Name Z–A</div>
+            <div class="sort-opt" data-val="size-desc">Size ↓</div>
+          </div>
+        </div>
 
         <div class="tb-sep"></div>
 
@@ -1946,11 +1958,39 @@ document.getElementById('searchInput').addEventListener('input', e=>{
   updateStatus();
 });
 
-document.getElementById('sortSel').addEventListener('change', e=>{
-  state.sortBy = e.target.value;
-  renderGrid();
-  updateStatus();
-});
+// Custom sort dropdown
+(()=>{
+  const SORT_LABELS = {'date-desc':'Date ↓','date-asc':'Date ↑','name-asc':'Name A–Z','name-desc':'Name Z–A','size-desc':'Size ↓'};
+  const btn = document.getElementById('sortBtn');
+  const drop = document.getElementById('sortDrop');
+  const label = document.getElementById('sortLabel');
+
+  btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    // Mark active option
+    drop.querySelectorAll('.sort-opt').forEach(o=>{
+      o.classList.toggle('active', o.dataset.val===state.sortBy);
+    });
+    const rect = btn.getBoundingClientRect();
+    drop.style.left = '0px';
+    drop.classList.toggle('show');
+  });
+
+  drop.querySelectorAll('.sort-opt').forEach(o=>{
+    o.addEventListener('click', ()=>{
+      state.sortBy = o.dataset.val;
+      label.textContent = SORT_LABELS[state.sortBy]||'Sort';
+      drop.classList.remove('show');
+      renderGrid();
+      updateStatus();
+    });
+  });
+
+  document.addEventListener('click', e=>{
+    if (!e.target.closest('#sortWrap')) drop.classList.remove('show');
+  });
+})();
+
 
 document.getElementById('sizeSlider').addEventListener('input', e=>{
   const val = parseInt(e.target.value);
