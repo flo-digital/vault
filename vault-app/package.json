@@ -32,7 +32,12 @@
     "dmg": {
       "title": "Vault",
       "backgroundColor": "#060606",
-      "window": { "width": 540, "height": 380 }
+      "window": { "width": 540, "height": 420 },
+      "contents": [
+        { "x": 150, "y": 160, "type": "file" },
+        { "x": 390, "y": 160, "type": "link", "path": "/Applications" },
+        { "x": 270, "y": 330, "type": "file", "path": "/tmp/HOW TO OPEN.txt" }
+      ]
     },
     "files": [
       "main.js",
